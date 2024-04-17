@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include "Renderer.h"
+#include "UtilFunctions.h"
 
 #include <iostream>
 #include <fstream>

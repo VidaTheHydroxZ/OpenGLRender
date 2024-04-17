@@ -1,4 +1,5 @@
 #include "VertexBuffer.h"
+#include "UtilFunctions.h"
 
 #include "Renderer.h"
 

@@ -1,4 +1,5 @@
 #include "IndexBuffer.h"
+#include "UtilFunctions.h"
 
 #include "Renderer.h"
 

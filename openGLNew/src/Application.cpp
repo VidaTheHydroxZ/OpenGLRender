@@ -76,11 +76,16 @@ int main(void)
 
         IndexBuffer ib(indices, 6);
 
-        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f); // this means that projection matrix is between -2.0x and 2.0x and -2.0y and 2.0y (-1 and +1) 
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(1.0, 0.5, 0));
+
+        glm::mat4 mvp = proj * view * model;
+        //glm::mat4 projection = glm::perspective()
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
-        shader.SetUniformMat4f("u_MVP", proj);
+        shader.SetUniformMat4f("u_MVP", mvp);
 
         Texture texture("Cherno.png");
         texture.Bind();
@@ -94,8 +99,6 @@ int main(void)
 
         Renderer renderer;
 
-        float r = 0.0f;
-        float increment = 0.05f;
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
@@ -108,17 +111,6 @@ int main(void)
             renderer.Draw(va, ib, shader);
 
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-
-            if (r > 1.0f)
-            {
-                increment = -0.01f;
-            }
-            else if (r < 0.0f)
-            {
-                increment = 0.01f;
-            }
-
-            r += increment;
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);

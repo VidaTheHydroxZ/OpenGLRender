@@ -15,6 +15,9 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
+
 int main(void)
 {
     GLFWwindow* window;
@@ -78,14 +81,11 @@ int main(void)
 
         glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f); // this means that projection matrix is between -2.0x and 2.0x and -2.0y and 2.0y (-1 and +1) 
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(1.0, 0.5, 0));
-
-        glm::mat4 mvp = proj * view * model;
         //glm::mat4 projection = glm::perspective()
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
-        shader.SetUniformMat4f("u_MVP", mvp);
+        
 
         Texture texture("Cherno.png");
         texture.Bind();
@@ -99,18 +99,38 @@ int main(void)
 
         Renderer renderer;
 
+        ImGui::CreateContext();
+        ImGui_ImplGlfwGL3_Init(window, true);
+        ImGui::StyleColorsDark();
+
+        glm::vec3 translation(1.0, 0.5, 0);
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
             /* Render here */
             renderer.Clear();
 
+            ImGui_ImplGlfwGL3_NewFrame();
+
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+            glm::mat4 mvp = proj * view * model;
+
             shader.Bind();
             shader.SetUniform4f("u_Color", 0.0f, 0.0f, 1.0f, 1.0);
+            shader.SetUniformMat4f("u_MVP", mvp);
 
             renderer.Draw(va, ib, shader);
 
-            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr))
+          
+            ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
+            ImGui::SliderFloat3("float", &translation.x, 0.0f, 2.0f);            // Edit 1 float using a slider from 0.0f to 2.0f    
+              
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+            ImGui::Render();
+            ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
@@ -119,6 +139,9 @@ int main(void)
             glfwPollEvents();
         }
     }
+    ImGui_ImplGlfwGL3_Shutdown();
+    ImGui::DestroyContext();
+
     glfwTerminate();
     return 0;
 }

@@ -18,6 +18,8 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw_gl3.h"
 
+#include "tests/TestClearColor.h"
+
 int main(void)
 {
     GLFWwindow* window;
@@ -32,7 +34,7 @@ int main(void)
 
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -54,48 +56,48 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
-        float positions[] = {
-           -0.5f, -0.5f, 0.0f, 0.0f, // 0
-            0.5f, -0.5f, 1.0f, 0.0f, // 1
-            0.5f,  0.5f, 1.0f, 1.0f, // 2
-           -0.5f,  0.5f, 0.0f, 1.0f  // 3
-        };
+    //    float positions[] = {
+    //       -50.0f, -50.0f, 0.0f, 0.0f, // 0
+    //        50.0f, -50.0f, 1.0f, 0.0f, // 1
+    //        50.0f,  50.0f, 1.0f, 1.0f, // 2
+    //       -50.0f,  50.0f, 0.0f, 1.0f  // 3
+    //    };
 
-        unsigned int indices[]{
-            0, 1, 2,
-            2, 3, 0
-        };
+    //    unsigned int indices[]{
+    //        0, 1, 2,
+    //        2, 3, 0
+    //    };
 
         GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-        VertexArray va;
-        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+        //VertexArray va;
+        //VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
-        VertexBufferLayout layout;
-        layout.Push(GL_FLOAT, 2);
-        layout.Push(GL_FLOAT, 2);
-        va.AddBuffer(vb, layout);
+        //VertexBufferLayout layout;
+        //layout.Push(GL_FLOAT, 2);
+        //layout.Push(GL_FLOAT, 2);
+        //va.AddBuffer(vb, layout);
 
-        IndexBuffer ib(indices, 6);
+        //IndexBuffer ib(indices, 6);
 
-        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f); // this means that projection matrix is between -2.0x and 2.0x and -2.0y and 2.0y (-1 and +1) 
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-        //glm::mat4 projection = glm::perspective()
+        //glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f); // this means that projection matrix is between -2.0x and 2.0x and -2.0y and 2.0y (-1 and +1) 
+        //glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+        ////glm::mat4 projection = glm::perspective()
 
-        Shader shader("res/shaders/Basic.shader");
-        shader.Bind();
-        
+        //Shader shader("res/shaders/Basic.shader");
+        //shader.Bind();
+        //
 
-        Texture texture("Cherno.png");
-        texture.Bind();
+        //Texture texture("Cherno.png");
+        //texture.Bind();
 
-        shader.SetUniform1i("u_Texture", 0);
+        //shader.SetUniform1i("u_Texture", 0);
 
-        va.Unbind();
-        shader.Unbind();
-        vb.Unbind();
-        ib.Unbind();
+        //va.Unbind();
+        //shader.Unbind();
+        //vb.Unbind();
+        //ib.Unbind();
 
         Renderer renderer;
 
@@ -103,7 +105,10 @@ int main(void)
         ImGui_ImplGlfwGL3_Init(window, true);
         ImGui::StyleColorsDark();
 
-        glm::vec3 translation(1.0, 0.5, 0);
+        test::TestClearColor test;
+
+ /*       glm::vec3 translationA(200, 200, 0);
+        glm::vec3 translationB(400, 200, 0);*/
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
@@ -111,31 +116,44 @@ int main(void)
             /* Render here */
             renderer.Clear();
 
+            test.OnUpdate(0.0f);
+            test.OnRender();
+
             ImGui_ImplGlfwGL3_NewFrame();
 
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
-            glm::mat4 mvp = proj * view * model;
+            test.OnImGuiRender();
 
-            shader.Bind();
-            shader.SetUniform4f("u_Color", 0.0f, 0.0f, 1.0f, 1.0);
-            shader.SetUniformMat4f("u_MVP", mvp);
+            //{
+            //    glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+            //    glm::mat4 mvp = proj * view * model;
+            //    shader.Bind();
+            //    shader.SetUniformMat4f("u_MVP", mvp);
 
-            renderer.Draw(va, ib, shader);
+            //    renderer.Draw(va, ib, shader);
+            //}
 
-            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr))
+            //{
+            //    glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
+            //    glm::mat4 mvp = proj * view * model;
+            //    shader.Bind();
+            //    shader.SetUniformMat4f("u_MVP", mvp);
+
+            //    renderer.Draw(va, ib, shader);
+            //}
+            ////GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr))
           
-            ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
-            ImGui::SliderFloat3("float", &translation.x, 0.0f, 2.0f);            // Edit 1 float using a slider from 0.0f to 2.0f    
-              
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            //ImGui::Text("Hello, world!");                          
+            //ImGui::SliderFloat3("##button1", &translationA.x, 0.0f, 960.0f);
+
+            //ImGui::SliderFloat3("##button2", &translationB.x, 0.0f, 960.0f);    
+            //  
+            //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
             ImGui::Render();
             ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
-            /* Swap front and back buffers */
             glfwSwapBuffers(window);
 
-            /* Poll for and process events */
             glfwPollEvents();
         }
     }

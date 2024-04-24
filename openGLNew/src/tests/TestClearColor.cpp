@@ -6,7 +6,7 @@
 
 namespace test {
 	TestClearColor::TestClearColor()
-		: m_ClearColor{ 0.2f, 0.3f, 0.8f, 1.0f }
+		: m_ClearColor{ 1.0f, 0.0f, 0.0f, 1.0f }
 	{
 	}
 	TestClearColor::~TestClearColor()
@@ -23,5 +23,7 @@ namespace test {
 	void TestClearColor::OnImGuiRender()
 	{
 		ImGui::ColorEdit4("Clear Color", m_ClearColor);
+		ImVec2 vec2 = { 1.0f, 1.0f };
+		ImGui::Button("Start Test", vec2);
 	}
 }

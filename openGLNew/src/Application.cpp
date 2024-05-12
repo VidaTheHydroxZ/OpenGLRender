@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <GLFW/glfw3.h>
+#include <conio.h>
 
 #include "VertexBufferLayout.h"
 #include "Renderer.h"
@@ -20,6 +21,9 @@
 
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
+
+#define KEY_UP 72
+#define KEY_DOWN 80
 
 struct Wall
 {
@@ -66,9 +70,10 @@ int main(void)
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
         float positions[] = {
-          50.0f,-50.0f, 0.0f,   1.0f, 0.0f, 0.0f,
-         -50.0f,-50.0f, 0.0f,   0.0f, 1.0f, 0.0f,
-          0.0f,  50.0f, 0.0f,   0.0f, 0.0f, 1.0f
+          1.0f, 1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+          1.0f,-1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+         -1.0f,-1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+         -1.0f, 1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f
         };
 
         float texCoordinates[] = {
@@ -79,25 +84,27 @@ int main(void)
         };
 
         unsigned int indices[]{
-            0, 1, 2, 0
+            0, 1, 2,
+            2, 3, 0
         };
 
         GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         VertexArray va;
-        VertexBuffer vb(positions, 6 * 3 * sizeof(float));
+        VertexBuffer vb(positions, 8 * 4 * sizeof(float));
 
         VertexBufferLayout layout;
        
         layout.Push(GL_FLOAT, 3);
         layout.Push(GL_FLOAT, 3);
+        layout.Push(GL_FLOAT, 2);
         va.AddBuffer(vb, layout);
 
-        IndexBuffer ib(indices, 4);
+        IndexBuffer ib(indices, 6);
 
-        glm::mat4 proj = glm::ortho(0.0f, 2560.0f, 0.0f, 1440.0f, -1.0f, 1.0f); // this means that projection matrix is between -2.0x and 2.0x and -2.0y and 2.0y (-1 and +1) 
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+        //glm::mat4 proj = glm::ortho(0.0f, 2560.0f, 0.0f, 1440.0f, -1.0f, 1.0f); // this means that projection matrix is between -2.0x and 2.0x and -2.0y and 2.0y (-1 and +1) 
+        //glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
         //glm::mat4 projection = glm::perspective();
 
         
@@ -105,11 +112,21 @@ int main(void)
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
 
-        //Texture texture("Cherno.png");
-        //texture.Bind();
+        Texture texture("textures/wooden_container.jpg");
+        Texture awesomeFace("textures/awesomeface.png");
 
-        //shader.SetUniform1i("u_Texture", 0);
 
+
+        shader.SetUniform1i("MyTexture", 0);
+        shader.SetUniform1i("MyTexture2", 1);
+
+        
+        float visibility = 1;
+        
+
+        
+
+       
         
         
         //shader.SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
@@ -142,20 +159,32 @@ int main(void)
                 float timeValue = glfwGetTime();
                 float greenValue = sin(timeValue) / 2.0f + 0.5f;
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
-                glm::mat4 mvp = proj * view * model;
+                //glm::mat4 mvp = proj * view * model;
                 shader.Bind();
-                shader.SetUniformMat4f("u_MVP", mvp);
-                //shader.SetUniform4f("u_Color", 0.0f, greenValue, 0.0f, 1.0f);
+                //shader.SetUniformMat4f("u_MVP", mvp);
+                shader.SetUniform1f("Visibility", visibility);
+                texture.Bind();
                 renderer.Draw(va, ib, shader);
             }
-            /*{
+            {
                 glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
-                glm::mat4 mvp = proj * view * model;
+                //glm::mat4 mvp = proj * view * model;
                 shader.Bind();
-                shader.SetUniformMat4f("u_MVP", mvp);
-                shader.SetUniform4f("u_Color", 1.0f, greenValue, 0.0f, 1.0f);
+                //shader.SetUniformMat4f("u_MVP", mvp);
+                shader.SetUniform1f("Visibility", visibility);
+                awesomeFace.Bind(1);
                 renderer.Draw(va, ib, shader);
-            }*/
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+            {
+                if (visibility <= 1) visibility += 0.001;
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+            {
+                if (visibility >= 0) visibility -= 0.001;
+            }
           
             ImGui::Text("Hello, world!");                          
             ImGui::SliderFloat3("##button1", &translationA.x, 0.0f, 2560.0f);

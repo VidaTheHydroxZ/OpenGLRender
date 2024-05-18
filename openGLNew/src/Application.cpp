@@ -4,7 +4,6 @@
 #include <string>
 #include <sstream>
 #include <GLFW/glfw3.h>
-#include <conio.h>
 
 #include "VertexBufferLayout.h"
 #include "Renderer.h"
@@ -12,6 +11,7 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "CameraController.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -22,16 +22,13 @@
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
 
-#define KEY_UP 72
-#define KEY_DOWN 80
+int SCREEN_WIDTH = 2560;
+int SCREEN_HEIGHT = 1440;
 
-struct Wall
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    glm::vec3 position;
-    glm::vec3 size;
-    glm::vec3 color;
-    Texture wallTextureID;
-};
+    glViewport(0, 0, width, height);
+}
 
 int main(void)
 {
@@ -47,7 +44,7 @@ int main(void)
 
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(2560, 1440, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -66,6 +63,15 @@ int main(void)
             std::cout << "Error!" << std::endl;
         }
     }
+    
+    CameraController Camera;
+    glfwSetWindowUserPointer(window, &Camera);
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, Camera.mouse_callback_static);
+    glfwSetScrollCallback(window, Camera.scroll_callback_static);
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
@@ -157,70 +163,63 @@ int main(void)
         shader.Unbind();
         vb.Unbind();
         ib.Unbind();
-
-        Renderer renderer;
+        float deltaTime = 0.0f;
+        float lastFrame = 0.0f;
+        
 
         ImGui::CreateContext();
         ImGui_ImplGlfwGL3_Init(window, true);
         ImGui::StyleColorsDark();
 
-
-        glm::vec3 translationA(400, 800, 0);
-        glm::vec3 translationB(300, 250, 0);
-        glm::vec3 translationC(300, 500, 0);
-
-
-       
-
-        glm::mat4 modelMatrix = glm::mat4(1.0f);
-        //modelMatrix = glm::rotate(modelMatrix, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-
-        glm::mat4 viewMatrix = glm::mat4(1.0f);
-        viewMatrix = glm::translate(viewMatrix, glm::vec3(0.0f, 0.0f, -5.0f));
+        
 
         glm::mat4 projectionMatrix;
-        projectionMatrix = glm::perspective(glm::radians(90.0f), 1280.0f / 1080.0f, 0.1f, 1000.0f);
-
-        glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
-
+        glm::mat4 viewMatrix;
+        glm::mat4 mvp;
+        
+        Renderer renderer(deltaTime);
         
         glEnable(GL_DEPTH_TEST);
 
-        float scaleAmount = static_cast<float>(sin(glfwGetTime()));
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
+            float currentFrame = static_cast<float>(glfwGetTime());
+            renderer.CalculateDeltaTime(currentFrame);
+            Camera.ProcessInput(window, renderer.GetDeltaTime());
+
             GLCall(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
             renderer.Clear();
             va.Bind();
+
             //ImGui_ImplGlfwGL3_NewFrame();
+            viewMatrix = glm::lookAt(Camera.m_cameraPos, Camera.m_cameraPos + Camera.m_cameraFront, Camera.WorldUp);
+            projectionMatrix = glm::perspective(glm::radians(Camera.GetFov()), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 1000.0f);
             for (unsigned int i = 0; i < 10; i++)
             {
                 shader.Bind();
                 glm::mat4 modelMatrix = glm::mat4(1.0f);
                 modelMatrix = glm::translate(modelMatrix, cubePositions[i]);
                 float angle = 20.0f * i;
-                modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
+                if (i % 3 == 0)
+                {
+                    angle = (float)glfwGetTime() * 25.0f;
+                    modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+                }
+                else {
+                    modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+                }
+                
                 mvp = projectionMatrix * viewMatrix * modelMatrix;
                 shader.SetUniformMat4f("u_MVP", mvp);
                 texture.Bind();
-                //renderer.Draw(va, ib, shader);
                 GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
             }
-            
             shader.Bind();
             shader.SetUniformMat4f("u_MVP", mvp);
             awesomeFace.Bind(1);
-            //renderer.Draw(va, ib, shader);
             va.Bind();
-            
-
-            /*ImGui::Text("Hello, world!");                          
-            ImGui::SliderFloat3("##button1", &translationA.x, 0.0f, 2560.0f);
-
-            ImGui::SliderFloat3("##button2", &translationB.x, 0.0f, 2560.0f);
-              
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);*/
 
             //ImGui::Render();
             //ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());

@@ -193,7 +193,7 @@ int main(void)
             va.Bind();
 
             //ImGui_ImplGlfwGL3_NewFrame();
-            viewMatrix = glm::lookAt(Camera.m_cameraPos, Camera.m_cameraPos + Camera.m_cameraFront, Camera.WorldUp);
+            viewMatrix = Camera.LookAround();
             projectionMatrix = glm::perspective(glm::radians(Camera.GetFov()), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 1000.0f);
             for (unsigned int i = 0; i < 10; i++)
             {
@@ -217,7 +217,7 @@ int main(void)
                 GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
             }
             shader.Bind();
-            shader.SetUniformMat4f("u_MVP", mvp);
+            shader.SetUniformMat4f("u_MVP", mvp)                                                                                                                                                                         ;
             awesomeFace.Bind(1);
             va.Bind();
 

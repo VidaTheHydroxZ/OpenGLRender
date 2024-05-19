@@ -71,7 +71,7 @@ int main(void)
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, Camera.mouse_callback_static);
-    glfwSetScrollCallback(window, Camera.scroll_callback_static);
+    
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
@@ -132,6 +132,13 @@ int main(void)
     glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
+    float crosshairPosition[] = {
+    -0.01f, 0.0f,
+     0.01f, 0.0f,
+     0.0f, -0.01f,
+     0.0f,  0.01f
+    };
+
     unsigned int indices[]{
             0, 1, 2, 3, 4, 5
     };
@@ -140,17 +147,28 @@ int main(void)
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         VertexArray va;
+        
         VertexBuffer vb(positions, 36 * 5 * sizeof(float));
-
-        VertexBufferLayout layout;
        
+        VertexBufferLayout layout;
+        
         layout.Push(GL_FLOAT, 3);
         layout.Push(GL_FLOAT, 2);
+        
         va.AddBuffer(vb, layout);
-
+        
         IndexBuffer ib(indices, 6);
 
+        VertexArray va2;
+        VertexBuffer vbcrossHair(crosshairPosition, 8 * sizeof(float));
+        VertexBufferLayout layout2;
+        layout2.Push(GL_FLOAT, 2);
+        va2.AddBuffer(vbcrossHair, layout2);
+
+
         Shader shader("res/shaders/Basic.shader");
+        Shader crosshairShader("res/shaders/crosshair.shader");
+
         shader.Bind();
 
         Texture texture("textures/wooden_container.jpg");
@@ -171,8 +189,6 @@ int main(void)
         ImGui_ImplGlfwGL3_Init(window, true);
         ImGui::StyleColorsDark();
 
-        
-
         glm::mat4 projectionMatrix;
         glm::mat4 viewMatrix;
         glm::mat4 mvp;
@@ -187,6 +203,7 @@ int main(void)
             float currentFrame = static_cast<float>(glfwGetTime());
             renderer.CalculateDeltaTime(currentFrame);
             Camera.ProcessInput(window, renderer.GetDeltaTime());
+            glfwSetScrollCallback(window, Camera.scroll_callback_static);
 
             GLCall(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
             renderer.Clear();
@@ -210,16 +227,22 @@ int main(void)
                 else {
                     modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
                 }
-                
+
                 mvp = projectionMatrix * viewMatrix * modelMatrix;
                 shader.SetUniformMat4f("u_MVP", mvp);
                 texture.Bind();
                 GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
             }
-            shader.Bind();
-            shader.SetUniformMat4f("u_MVP", mvp)                                                                                                                                                                         ;
-            awesomeFace.Bind(1);
-            va.Bind();
+            {
+                shader.Bind();
+                shader.SetUniformMat4f("u_MVP", mvp);
+                awesomeFace.Bind(1);
+            }
+            {
+                crosshairShader.Bind();
+                va2.Bind();
+                GLCall(glDrawArrays(GL_LINES, 0, 4));
+            }
 
             //ImGui::Render();
             //ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());

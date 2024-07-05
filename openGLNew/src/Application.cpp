@@ -75,49 +75,51 @@ int main(void)
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
-        float positions[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        float vertices[] = {
+            //positions       normals           textures
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,    0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,    1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f, 0.0f, -1.0f,    1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f, 0.0f, -1.0f,    1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, -1.0f,    0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, -1.0f,    0.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,     0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,     1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,     1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,     1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,     0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f,     0.0f, 0.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f,     1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f,     1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,     0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,     0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f,     0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f,     1.0f, 0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,     1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,     1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,     0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,     0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,     0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,     1.0f, 0.0f,
+                                      
+    -0.5f, -0.5f, -0.5f,  0.0f,-1.0f, 0.0f,     0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,-1.0f, 0.0f,     1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f,     1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f,     1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f,     0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,-1.0f, 0.0f,     0.0f, 1.0f,
+                                      
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,     0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,     1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,     1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,     1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,     0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,     0.0f, 1.0f
     };
+
 
     glm::vec3 cubePositions[] = {
     glm::vec3( 0.0f,  0.0f,  0.0f),
@@ -148,10 +150,10 @@ int main(void)
 
         VertexArray va;
         
-        VertexBuffer vb(positions, 36 * 5 * sizeof(float));
-       
+        VertexBuffer vb(vertices, 36 * 8 * sizeof(float));
         VertexBufferLayout layout;
         
+        layout.Push(GL_FLOAT, 3);
         layout.Push(GL_FLOAT, 3);
         layout.Push(GL_FLOAT, 2);
         
@@ -159,23 +161,31 @@ int main(void)
         
         IndexBuffer ib(indices, 6);
 
-        VertexArray va2;
+        VertexArray crosshairVAO;
         VertexBuffer vbcrossHair(crosshairPosition, 8 * sizeof(float));
-        VertexBufferLayout layout2;
-        layout2.Push(GL_FLOAT, 2);
-        va2.AddBuffer(vbcrossHair, layout2);
+        VertexBufferLayout crosshairLayout;
+        crosshairLayout.Push(GL_FLOAT, 2);
+        crosshairVAO.AddBuffer(vbcrossHair, crosshairLayout);
 
+
+        VertexArray lightVAO;
+        lightVAO.AddBuffer(vb, layout);
 
         Shader shader("res/shaders/Basic.shader");
         Shader crosshairShader("res/shaders/crosshair.shader");
+        Shader lightShader("res/shaders/lightShader.shader");
 
+
+        glm::vec3 objectColorPosition(1.0f, 0.5f, 0.31f);
+        glm::vec3 lightColorPosition(1.0f, 1.0f, 1.0f);
+        glm::vec3 lightPosition(1.2f, 1.0f, 2.0f);
+        glm::vec3 viewerPosition(0.0f, 0.0f, 0.0f);
+        
         shader.Bind();
-
-        Texture texture("textures/wooden_container.jpg");
-        Texture awesomeFace("textures/awesomeface.png");
-
-        shader.SetUniform1i("MyTexture", 0);
-        shader.SetUniform1i("MyTexture2", 1);
+        shader.SetUniformVec3("objectColor", objectColorPosition);
+        shader.SetUniformVec3("lightColor", lightColorPosition);
+        shader.SetUniformVec3("lightPos", lightPosition);
+        shader.SetUniformVec3("viewerPosition", viewerPosition);
 
         va.Unbind();
         shader.Unbind();
@@ -183,7 +193,6 @@ int main(void)
         ib.Unbind();
         float deltaTime = 0.0f;
         float lastFrame = 0.0f;
-        
 
         ImGui::CreateContext();
         ImGui_ImplGlfwGL3_Init(window, true);
@@ -192,7 +201,7 @@ int main(void)
         glm::mat4 projectionMatrix;
         glm::mat4 viewMatrix;
         glm::mat4 mvp;
-        
+
         Renderer renderer(deltaTime);
         
         glEnable(GL_DEPTH_TEST);
@@ -205,42 +214,39 @@ int main(void)
             Camera.ProcessInput(window, renderer.GetDeltaTime());
             glfwSetScrollCallback(window, Camera.scroll_callback_static);
 
-            GLCall(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
+            GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
             renderer.Clear();
             va.Bind();
 
             //ImGui_ImplGlfwGL3_NewFrame();
+
             viewMatrix = Camera.LookAround();
             projectionMatrix = glm::perspective(glm::radians(Camera.GetFov()), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 1000.0f);
-            for (unsigned int i = 0; i < 10; i++)
             {
                 shader.Bind();
                 glm::mat4 modelMatrix = glm::mat4(1.0f);
-                modelMatrix = glm::translate(modelMatrix, cubePositions[i]);
-                float angle = 20.0f * i;
-
-                if (i % 3 == 0)
-                {
-                    angle = (float)glfwGetTime() * 25.0f;
-                    modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-                }
-                else {
-                    modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-                }
-
+                modelMatrix = glm::rotate(modelMatrix, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+                modelMatrix = glm::translate(modelMatrix, glm::vec3(5.0f, 0.0f, -2.0f));
+                modelMatrix = glm::scale(modelMatrix, glm::vec3(8.0f, 3.0f, 0.2f));
+                shader.SetUniformMat4f("modelMatrix", modelMatrix);
                 mvp = projectionMatrix * viewMatrix * modelMatrix;
                 shader.SetUniformMat4f("u_MVP", mvp);
-                texture.Bind();
+                texture1.Bind();
+                renderer.Draw(va, ib, shader);
                 GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
             }
             {
-                shader.Bind();
-                shader.SetUniformMat4f("u_MVP", mvp);
-                awesomeFace.Bind(1);
+                lightShader.Bind();
+                glm::mat4 modelMatrix = glm::mat4(1.0f);
+                modelMatrix = glm::translate(modelMatrix, lightPosition);
+                modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
+                mvp = projectionMatrix * viewMatrix * modelMatrix;
+                lightShader.SetUniformMat4f("mvp", mvp);
+                GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
             }
             {
                 crosshairShader.Bind();
-                va2.Bind();
+                crosshairVAO.Bind();
                 GLCall(glDrawArrays(GL_LINES, 0, 4));
             }
 
